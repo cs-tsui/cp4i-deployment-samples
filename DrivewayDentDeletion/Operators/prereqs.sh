@@ -150,14 +150,14 @@ do
       echo -e "\n----------------------------------------------------------------------------------------------------------------------------------------------------------\n"
       echo -e "INFO: Creating ace integration server configuration resources in the namespace '$image_project'"
 
-      if ! ${CURRENT_DIR}/../../products/bash/create-ace-config.sh -n ${image_project} -s $each_suffix; then
+      if ! ${CURRENT_DIR}/../../products/bash/create-ace-config.sh -n ${image_project} -s $each_suffix -d; then
         printf "$cross "
         echo "ERROR: Failed to configure ace in the namespace '$image_project'  with the suffix '$each_suffix'"
         exit 1
       else
         printf "$tick "
         echo "INFO: Successfuly configured ace in the namespace '$image_project' with the suffix '$each_suffix'"
-      fi  #${CURRENT_DIR}/../../products/bash/create-ace-config.sh -n ${image_project} -s $each_suffix
+      fi  #${CURRENT_DIR}/../../products/bash/create-ace-config.sh -n ${image_project} -s $each_suffix -d
     fi  #("$each_suffix" == "ddd")
   done #for_inner_done
   echo -e "\n----------------------------------------------------------------------------------------------------------------------------------------------------------\n"
@@ -202,4 +202,3 @@ fi
 echo -e "\n----------------------------------------------------------------------------------------------------------------------------------------------------------\n"
 echo -e "$tick $all_done INFO: All prerequisites for the driveway dent deletion have been applied successfully $all_done $tick"
 echo -e "\n----------------------------------------------------------------------------------------------------------------------------------------------------------\n"
-
