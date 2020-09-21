@@ -45,7 +45,7 @@ function buildConfigurationCR {
   echo "  name: $name" >> $CONFIG_YAML
   echo "  namespace: $NAMESPACE" >> $CONFIG_YAML
   echo "spec:" >> $CONFIG_YAML
-  (echo -n "  contents: "; base64 $file) >> $CONFIG_YAML
+  echo "  contents: $(base64 -w0 $file)" >> $CONFIG_YAML
   echo "  type: $type" >> $CONFIG_YAML
   echo "---" >> $CONFIG_YAML
 }
@@ -112,7 +112,7 @@ cat << EOF > $CURRENT_DIR/DefaultPolicies/default.policyxml
   </policy>
 </policies>
 EOF
-$DEBUG && echo -e "[DEBUG] mq policy:\n$(cat $CURRENT_DIR/DefaultPolicies/default.policyxml)"
+$DEBUG && echo -e "[DEBUG] mq policy:\n$(cat -n $CURRENT_DIR/DefaultPolicies/default.policyxml)"
 
 echo -e "\n----------------------------------------------------------------------------------------------------------------------------------------------------------\n"
 
@@ -145,7 +145,7 @@ cat << EOF > $CURRENT_DIR/DefaultPolicies/PostgresqlPolicy.policyxml
   </policy>
 </policies>
 EOF
-$DEBUG && echo -e "[DEBUG] postgres policy:\n$(cat $CURRENT_DIR/DefaultPolicies/PostgresqlPolicy.policyxml)"
+$DEBUG && echo -e "[DEBUG] postgres policy:\n$(cat -n $CURRENT_DIR/DefaultPolicies/PostgresqlPolicy.policyxml)"
 
 echo -e "\n----------------------------------------------------------------------------------------------------------------------------------------------------------\n"
 
@@ -158,7 +158,7 @@ cat << EOF > $CURRENT_DIR/DefaultPolicies/BasicAuth.policyxml
   </policy>
 </policies>
 EOF
-$DEBUG && echo -e "[DEBUG] basic auth policy:\n$(cat $CURRENT_DIR/DefaultPolicies/BasicAuth.policyxml)"
+$DEBUG && echo -e "[DEBUG] basic auth policy:\n$(cat -n $CURRENT_DIR/DefaultPolicies/BasicAuth.policyxml)"
 
 echo -e "\n----------------------------------------------------------------------------------------------------------------------------------------------------------\n"
 
@@ -169,7 +169,7 @@ cat << EOF > $CURRENT_DIR/DefaultPolicies/policy.descriptor
   <references/>
 </ns2:policyProjectDescriptor>
 EOF
-$DEBUG && echo -e "[DEBUG] policy descriptor:\n$(cat $CURRENT_DIR/DefaultPolicies/policy.descriptor)"
+$DEBUG && echo -e "[DEBUG] policy descriptor:\n$(cat -n $CURRENT_DIR/DefaultPolicies/policy.descriptor)"
 
 echo -e "\n----------------------------------------------------------------------------------------------------------------------------------------------------------\n"
 
@@ -184,7 +184,7 @@ ResourceManagers:
     KeystoreType: 'PKCS12'
     KeystorePassword: 'brokerKeystore::password'
 EOF
-$DEBUG && echo -e "[DEBUG] server conf:\n$(cat $CURRENT_DIR/tmp/serverconf.yaml)"
+$DEBUG && echo -e "[DEBUG] server conf:\n$(cat -n $CURRENT_DIR/tmp/serverconf.yaml)"
 
 echo -e "\n----------------------------------------------------------------------------------------------------------------------------------------------------------\n"
 
@@ -194,11 +194,11 @@ CERTS=$CURRENT_DIR/tmp/certs.pem
 KEY=$CURRENT_DIR/tmp/key.pem
 KEYSTORE=$CURRENT_DIR/tmp/keystore.p12
 oc get secret -n openshift-config-managed router-certs -o json | jq -r '.data | .[]' | base64 -d > $CERTS_KEY_BUNDLE
-$DEBUG && echo -e "[DEBUG] certs+key bundle:\n$(cat $CERTS_KEY_BUNDLE)"
+$DEBUG && echo -e "[DEBUG] certs+key bundle:\n$(cat -n $CERTS_KEY_BUNDLE)"
 openssl crl2pkcs7 -nocrl -certfile $CERTS_KEY_BUNDLE | openssl pkcs7 -print_certs -out $CERTS
-$DEBUG && echo -e "[DEBUG] certs:\n$(cat $CERTS)"
+$DEBUG && echo -e "[DEBUG] certs:\n$(cat -n $CERTS)"
 openssl pkey -in $CERTS_KEY_BUNDLE -out $KEY
-$DEBUG && echo -e "[DEBUG] key:\n$(cat $KEY)"
+$DEBUG && echo -e "[DEBUG] key:\n$(cat -n $KEY)"
 openssl pkcs12 -export -out $KEYSTORE -inkey $KEY -in $CERTS -password pass:$KEYSTORE_PASS
 $DEBUG && echo -e "[DEBUG] p12:\n$(openssl pkcs12 -nodes -in $KEYSTORE -password pass:$KEYSTORE_PASS)"
 
@@ -209,7 +209,7 @@ cat << EOF > $CURRENT_DIR/tmp/setdbparms
 local::basicAuthOverride $API_USER $API_PASS
 brokerKeystore::password ignore $KEYSTORE_PASS
 EOF
-$DEBUG && echo -e "[DEBUG] setdbparms:\n$(cat $CURRENT_DIR/tmp/setdbparms)"
+$DEBUG && echo -e "[DEBUG] setdbparms:\n$(cat -n $CURRENT_DIR/tmp/setdbparms)"
 
 echo -e "\n----------------------------------------------------------------------------------------------------------------------------------------------------------\n"
 
