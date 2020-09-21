@@ -221,14 +221,14 @@ echo -e "\n---------------------------------------------------------------------
 # Generate configuration yaml
 echo "[INFO]  Generating configuration yaml"
 for i in ${!NAMES[@]}; do
-  file=${FILES[$i]}
-  if [[ -d ${FILES[$i]} ]]; then
-    python -m zipfile -c ${file} ${file}
+  file=$CURRENT_DIR/${FILES[$i]}
+  if [[ -d $CURRENT_DIR/${FILES[$i]} ]]; then
+    python -m zipfile -c $file $file
     file=${file}.zip
   fi
-  buildConfigurationCR ${TYPES[$i]} ${NAMES[$i]} ${file}
+  buildConfigurationCR ${TYPES[$i]} ${NAMES[$i]} $file
 done
-$DEBUG && echo -e "[DEBUG] config yaml:\n$(cat $CONFIG_YAML)"
+$DEBUG && echo -e "[DEBUG] config yaml:\n$(cat -n $CONFIG_YAML)"
 
 echo -e "\n----------------------------------------------------------------------------------------------------------------------------------------------------------\n"
 
